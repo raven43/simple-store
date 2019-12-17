@@ -26,10 +26,4 @@ public interface ItemRepo extends PagingAndSortingRepository<Item, Long> {
     @Query(value = "select * from #{#entityName} e order by RAND()", nativeQuery = true)
     Page<Item> getRandom(Pageable pageable);
 
-    //    @Query(value = "select distinct * from simple_store.item as i where i.category=:category and i.id not in (select i2.id from simple_store.item as i2 join i2.tags as t where t not in :tags)",nativeQuery = true)
-////    @Query("SELECT i FROM Item i JOIN i.tags t WHERE t in :tags AND i.category = :category group by i.id having count(i.id) = :tagCount")
-
-//    Page<Item> findByCategoryAndTagsContaining(@Param("category") String category, @Param("tags") List<String> tags, Pageable pageable);
-//    @Query("SELECT i FROM Item i WHERE i.tags in :tags  AND i.category=:category")
-//    Page<Item> findByCategoryAndTagsContaining(@Param("category") String category, @Param("tags")Iterable<String> tags, Pageable pageable);
 }

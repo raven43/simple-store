@@ -33,7 +33,11 @@ public class ViewController {
     private final ShopService shopService;
 
     @Autowired
-    public ViewController(ItemService itemService, TopicRepo topicRepo, CommentRepo commentRepo, CommentService commentService, ShopService shopService) {
+    public ViewController(ItemService itemService,
+                          TopicRepo topicRepo,
+                          CommentRepo commentRepo,
+                          CommentService commentService,
+                          ShopService shopService) {
         this.itemService = itemService;
         this.topicRepo = topicRepo;
         this.commentRepo = commentRepo;
@@ -42,10 +46,7 @@ public class ViewController {
     }
 
     @GetMapping
-    public String main(
-            Model model
-    ) {
-
+    public String main(Model model) {
         model.addAttribute("categories", itemService.getCategories());
         return "view/main";
     }
@@ -54,9 +55,7 @@ public class ViewController {
     public String getCategory(
             @PathVariable String category,
             Pageable pageable,
-            Model model
-    ) {
-
+            Model model) {
         Page<Item> page = itemService.getPage(category, pageable);
         model.addAttribute("category", category);
         model.addAttribute("page", page);
@@ -68,18 +67,18 @@ public class ViewController {
     public String getItem(
             @AuthenticationPrincipal User user,
             @PathVariable Long id,
-            Model model
-    ) {
-        boolean inSC = false;
+            Model model) {
+        boolean isItemInShopCart = false;
         Set<Order> set = shopService.getShopCart(user);
         Item item = itemService.findById(id);
-        for (Order order : set)
+        for (Order order : set) {
             if (order.getItem().equals(item)) {
-                inSC = true;
+                isItemInShopCart = true;
             }
+        }
 
         model.addAttribute("item", item);
-        model.addAttribute("inSC", inSC);
+        model.addAttribute("inSC", isItemInShopCart);
         return "view/item";
     }
 
@@ -88,8 +87,7 @@ public class ViewController {
     public String getItemComments(
             @PathVariable Long id,
             Pageable pageable,
-            Model model
-    ) {
+            Model model) {
         Item item = itemService.findById(id);
         Page<Comment> page = commentRepo.getByTopic(item.getTopic(), pageable);
         model.addAttribute("page", page);
@@ -104,11 +102,12 @@ public class ViewController {
             @AuthenticationPrincipal User user,
             @RequestParam String text,
             Pageable pageable,
-            Model model
-    ) {
+            Model model) {
         Item item = itemService.findById(id);
 
-        if (item.getTopic() == null) item.setTopic(topicRepo.save(new Topic()));
+        if (item.getTopic() == null) {
+            item.setTopic(topicRepo.save(new Topic()));
+        }
 
         Comment comment = new Comment(user, item.getTopic(), text);
         commentRepo.save(comment);
@@ -120,6 +119,4 @@ public class ViewController {
         model.addAttribute("type", "store/item");
         return "view/topic";
     }
-
-
 }

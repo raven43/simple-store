@@ -12,12 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class ErrController implements ErrorController {
 
-
     @RequestMapping("/error")
     public String handleError(
             HttpServletRequest request,
-            Model model
-    ) {
+            Model model) {
         String status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE).toString();
         String message;
         switch (status) {
